@@ -26,6 +26,7 @@ SQL_CREATE_FOLLOW_RESTRICTION_TABLE = """
     CREATE TABLE IF NOT EXISTS `followRestriction` (
         `profile_id` INTEGER REFERENCES `profiles` (id),
         `username` TEXT NOT NULL,
+        `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
         `times` TINYINT UNSIGNED NOT NULL);"""
 
 SQL_CREATE_SHARE_WITH_PODS_RESTRICTION_TABLE = """
@@ -38,6 +39,7 @@ SQL_CREATE_COMMENT_RESTRICTION_TABLE = """
     CREATE TABLE IF NOT EXISTS `commentRestriction` (
         `profile_id` INTEGER REFERENCES `profiles` (id),
         `postid` TEXT NOT NULL,
+        `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
         `times` TINYINT UNSIGNED NOT NULL);"""
 
 SQL_CREATE_ACCOUNTS_PROGRESS_TABLE = """

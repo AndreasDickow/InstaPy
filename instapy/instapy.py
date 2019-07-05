@@ -988,6 +988,8 @@ class InstaPy:
         self.logger.info("Already followed: {}".format(already_followed))
         self.logger.info("Not valid users: {}".format(not_valid_users))
 
+
+
         if interact is True:
             print('')
             # print results out of interactions
@@ -995,6 +997,8 @@ class InstaPy:
             self.logger.info("Already Liked: {}".format(already_liked))
             self.logger.info("Commented: {}".format(commented))
             self.logger.info("Inappropriate: {}".format(inap_img))
+
+
 
         return self
 

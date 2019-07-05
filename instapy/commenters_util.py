@@ -1,4 +1,4 @@
-"""Methods to extract the data for the given usernames profile"""
+f"""Methods to extract the data for the given usernames profile"""
 # code created by modification of original code copied from
 # https://github.com/timgrossmann/instagram-profilecrawl/blob/master/util
 # /extractor.py
