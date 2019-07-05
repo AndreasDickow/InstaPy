@@ -101,7 +101,7 @@ class InstaPy:
                  password=None,
                  nogui=False,
                  selenium_local_session=True,
-                 use_firefox=False,
+                 use_firefox=True,
                  browser_profile_path=None,
                  page_delay=25,
                  show_logs=True,
@@ -756,7 +756,7 @@ class InstaPy:
 
         return self
 
-    def query_clarifai(self):
+    def query_clarifai(self,location=None):
         """Method for querying Clarifai using parameters set in
         clarifai_check_img_for"""
         return check_image(self.browser, self.clarifai_api_key,
@@ -765,7 +765,7 @@ class InstaPy:
                            self.clarifai_models,
                            self.clarifai_workflow, self.clarifai_probability,
                            self.clarifai_full_match, self.clarifai_check_video,
-                           proxy=self.clarifai_proxy)
+                           proxy=self.clarifai_proxy,loca=location)
 
     def follow_commenters(self, usernames, amount=10, daysold=365, max_pic=50,
                           sleep_delay=600, interact=False):
@@ -1414,7 +1414,7 @@ class InstaPy:
                                 try:
                                     checked_img, temp_comments, \
                                     clarifai_tags = (
-                                        self.query_clarifai())
+                                        self.query_clarifai(location.encode('utf-8')))
 
                                 except Exception as err:
                                     self.logger.error(
@@ -1603,11 +1603,7 @@ class InstaPy:
                         following = random.randint(
                             0, 100) <= self.follow_percentage
 
-                        if not commenting:
-                            self.logger.info(
-                                "--> Image not commented: skipping out of "
-                                "given comment percentage")
-                            continue
+
 
                         if self.use_clarifai:
                             try:
@@ -1617,7 +1613,11 @@ class InstaPy:
                             except Exception as err:
                                 self.logger.error(
                                     'Image check error: {}'.format(err))
-
+                        if not commenting:
+                            self.logger.info(
+                                "--> Image not commented: skipping out of "
+                                "given comment percentage")
+                            continue
                         if (self.do_comment and
                                 user_name not in self.dont_include and
                                 checked_img):

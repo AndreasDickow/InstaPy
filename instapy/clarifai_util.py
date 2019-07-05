@@ -3,7 +3,8 @@ the image for invalid content"""
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Workflow
 from selenium.common.exceptions import NoSuchElementException
-
+from PIL import Image
+from io import BytesIO
 from .xpath import read_xpath
 
 def check_image(browser,
@@ -17,7 +18,7 @@ def check_image(browser,
                 full_match=False,
                 check_video=False,
                 proxy=None,
-                picture_url=None):
+                picture_url=None,loca=None):
     try:
         """Uses the link to the image to check for invalid content in the
         image.
@@ -74,6 +75,7 @@ def check_image(browser,
             )
         )
 
+
         # Will not comment on an image if any of the tags in
         # img_tags_skip_if_contain are matched
         if given_tags_in_result(img_tags_skip_if_contain, clarifai_tags):
@@ -88,6 +90,39 @@ def check_image(browser,
         for (tags, should_comment, comments) in img_tags:
             if should_comment and given_tags_in_result(tags, clarifai_tags,
                                                        full_match):
+                try:
+                    element = browser.find_element_by_xpath(
+                            read_xpath(get_source_link.__name__, "image"))
+
+                except NoSuchElementException:
+
+                    element = browser.find_element_by_xpath(
+                            read_xpath(get_source_link.__name__, "image_alt"))
+
+
+                print(element)
+                location = element.location
+                size = element.size
+                print(location)
+                png = browser.get_screenshot_as_png()  # saves screenshot of entire page
+                print("got png")
+
+
+                im = Image.open(BytesIO(png))  # uses PIL library to open image in memory
+                print(im)
+
+                left = location['x']
+                top = location['y']
+                right = location['x'] + size['width']
+                bottom = location['y'] + size['height']
+
+                im = im.crop((left, top, right, bottom))  # defines crop points
+                print("crop")
+                loc = ""
+                if loca:
+                    loc = "xxx"+loca+"xxx"
+                im.convert("RGB").save("/Users/andreasdickow/InstaPy/logs/andreasdickow/imgs/" +loc+ ("__".join(clarifai_tags)).replace(" ", "_") + '.jpg')
+                print("save")
                 return True, comments, clarifai_tags
             elif given_tags_in_result(tags, clarifai_tags, full_match):
                 logger.info(
@@ -95,6 +130,45 @@ def check_image(browser,
                         ', '.join(list(set(clarifai_tags) & set(tags)))
                     )
                 )
+
+
+
+
+
+                # now that we have the preliminary stuff out of the way time to get that image :D
+                try:
+                    element = browser.find_element_by_xpath(
+                            read_xpath(get_source_link.__name__, "image"))
+
+                except NoSuchElementException:
+
+                    element = browser.find_element_by_xpath(
+                            read_xpath(get_source_link.__name__, "image_alt"))
+
+                print(element)
+                location = element.location
+                size = element.size
+
+                png = browser.get_screenshot_as_png()  # saves screenshot of entire page
+
+
+                im = Image.open(BytesIO(png))  # uses PIL library to open image in memory
+
+
+                left = location['x']
+                top = location['y']
+                right = location['x'] + size['width']
+                bottom = location['y'] + size['height']
+
+                im = im.crop((left, top, right, bottom))  # defines crop points
+
+                loc = ""
+                if loca:
+                    loc = "xxx" + loca + "xxx"
+                im.convert("RGB").save(
+                    "/Users/andreasdickow/InstaPy/logs/andreasdickow/imgs/" + loc + ("__".join(clarifai_tags)).replace(
+                        " ", "_") + '.jpg')
+                print("save")
                 return False, [], clarifai_tags
 
         return True, [], clarifai_tags

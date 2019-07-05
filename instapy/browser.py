@@ -73,7 +73,6 @@ def set_selenium_local_session(proxy_address,
 
         browser = webdriver.Firefox(firefox_profile=firefox_profile,
                                     options=firefox_options)
-
         # converts to custom browser
         # browser = convert_selenium_browser(browser)
 
@@ -312,6 +311,10 @@ def retry(max_retry_count = 3, start_page = None):
 class custom_browser(Remote):
     '''Custom browser instance for manupulation later on'''
 
+    def  get_screenshot_as_png(self, *args, **kwargs):
+        '''example usage of hooking into built in functions'''
+        rv = super(custom_browser, self).get_screenshot_as_png(*args, **kwargs)
+        return rv
 
     def find_element_by_xpath(self, *args, **kwargs):
         '''example usage of hooking into built in functions'''
